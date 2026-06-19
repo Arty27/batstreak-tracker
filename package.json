@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "dev:api": "node --experimental-sqlite server/index.js",
+    "dev:api": "node server/index.js",
+    "start": "node server/index.js",
     "build": "tsc -b && vite build",
-    "preview": "vite preview --host 127.0.0.1",
-    "start": "node --experimental-sqlite server/index.js"
+    "preview": "vite preview --host 127.0.0.1"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
     "@vitejs/plugin-react": "latest",
+    "dotenv": "^17.4.2",
     "lucide-react": "latest",
     "react": "latest",
     "react-dom": "latest",
