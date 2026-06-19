@@ -11,7 +11,7 @@ import {
   Shield,
   Trash2,
 } from "lucide-react";
-import BatLogo from "../public/assets/bat_logo.png";
+import BatLogo from "/assets/batlogo2.png";
 import "./styles.css";
 
 type TaskDefinition = {
@@ -225,6 +225,7 @@ const App = () => {
       ...options,
       headers: {
         "Content-Type": "application/json",
+        "x-api-secret": import.meta.env.VITE_API_SECRET,
         ...options?.headers,
       },
     });
