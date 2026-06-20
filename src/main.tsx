@@ -238,7 +238,7 @@ const App = () => {
     return payload as T;
   };
 
-  const updateTaskEntry = (taskId: string, patch: Partial<TaskEntry>) => {
+  const updateTaskEntryLocal = (taskId: string, patch: Partial<TaskEntry>) => {
     if (!canEditSelectedDate) return;
 
     setState((previous) => {
@@ -261,13 +261,23 @@ const App = () => {
         },
       };
     });
+  };
 
-    requestJson<TaskEntry>("/api/entries", {
-      method: "PATCH",
-      body: JSON.stringify({ dateKey: selectedDate, taskId, patch }),
-    })
-      .then(() => setSyncError(""))
-      .catch((error: Error) => setSyncError(error.message));
+  const saveEntry = async (taskId: string, patch: Partial<TaskEntry>) => {
+    try {
+      await requestJson<TaskEntry>("/api/entries", {
+        method: "PATCH",
+        body: JSON.stringify({
+          dateKey: selectedDate,
+          taskId,
+          patch,
+        }),
+      });
+
+      setSyncError("");
+    } catch (error) {
+      setSyncError((error as Error).message);
+    }
   };
 
   const addTask = () => {
@@ -460,7 +470,7 @@ const App = () => {
                 value={entry.note}
                 disabled={!canEditSelectedDate}
                 onChange={(event) =>
-                  updateTaskEntry(task.id, {
+                  updateTaskEntryLocal(task.id, {
                     note: event.target.value,
                     done: false,
                   })
@@ -470,7 +480,12 @@ const App = () => {
                 className="complete-button"
                 disabled={!noteReady || !canEditSelectedDate}
                 type="button"
-                onClick={() => updateTaskEntry(task.id, { done: !entry.done })}
+                onClick={() => {
+                  updateTaskEntryLocal(task.id, {
+                    done: !entry.done,
+                  });
+                  saveEntry(task.id, { done: !entry.done, note: entry.note });
+                }}
               >
                 {complete ? <Check size={18} /> : <Flame size={18} />}
                 {!canEditSelectedDate
